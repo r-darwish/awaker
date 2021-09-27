@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Awaker</title>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+          integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" rel="stylesheet">
+</head>
+<body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $.ajax({url: "/wake"})
+            .done(function (data) {
+                $.each(data, function (index, host) {
+                    $("#hosts").append(
+                        "<button id=" + host.name + " type=\"button\" class=\"btn btn-primary\">" + host.name + "</button><br/>"
+                    );
+                    $("#" + host.name).click(function () {
+                        $.ajax({
+                            url: "/wake",
+                            method: "POST",
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            data: JSON.stringify({"macAddress": host.macAddress})
+                        })
+                    })
+                })
+            })
+    })
+</script>
+<div class="container">
+    <h1>Choose a host to wake</h1>
+    <table id="hosts"></table>
+</div>
+</body>
+</html>

@@ -1,0 +1,5 @@
+awaker:
+  clients:
+    - name: technodrome
+      macAddress: 2C-4D-54-56-40-D6
+  broadcastAddress: 10.100.102.0
