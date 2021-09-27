@@ -20,7 +20,7 @@ import java.util.List;
 public class Wake {
     private final WakeOnLan wakeOnLan;
 
-    @Property(name = "awaker.clients")
+    @Property(name = "awaker.broadcastAddress")
     protected String broadcastAddress;
 
     @Property(name = "awaker.clients")
