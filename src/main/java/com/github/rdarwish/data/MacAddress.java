@@ -1,5 +1,8 @@
 package com.github.rdarwish.data;
 
+import io.micronaut.core.annotation.Introspected;
+
+@Introspected
 public class MacAddress {
     private final byte[] bytes;
 
