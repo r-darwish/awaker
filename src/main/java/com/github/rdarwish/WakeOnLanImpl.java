@@ -2,18 +2,15 @@ package com.github.rdarwish;
 
 import com.github.rdarwish.data.MacAddress;
 import jakarta.inject.Singleton;
-
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
+import reactor.core.publisher.Mono;
+import reactor.netty.udp.UdpClient;
 
 @Singleton
 public class WakeOnLanImpl implements WakeOnLan {
     public static final int PORT = 9;
 
     @Override
-    public void wake(MacAddress macAddress, String ipAddress) throws IOException {
+    public Mono<Void> wake(MacAddress macAddress, String ipAddress) {
         var macBytes = macAddress.getBytes();
         byte[] bytes = new byte[6 + 16 * macBytes.length];
         for (int i = 0; i < 6; i++) {
@@ -23,11 +20,12 @@ public class WakeOnLanImpl implements WakeOnLan {
             System.arraycopy(macBytes, 0, bytes, i, macBytes.length);
         }
 
-        InetAddress address = InetAddress.getByName(ipAddress);
-        DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, PORT);
-        DatagramSocket socket = new DatagramSocket();
-        socket.send(packet);
-        socket.close();
+        return UdpClient.create()
+            .host(ipAddress)
+            .port(PORT)
+            .connect()
+            .flatMap(connection -> Mono.from(connection.outbound().sendByteArray(Mono.just(bytes))))
+            .then();
     }
 
 

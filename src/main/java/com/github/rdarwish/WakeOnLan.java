@@ -1,9 +1,8 @@
 package com.github.rdarwish;
 
 import com.github.rdarwish.data.MacAddress;
-
-import java.io.IOException;
+import reactor.core.publisher.Mono;
 
 public interface WakeOnLan {
-    void wake(MacAddress macAddress, String ipAddress) throws IOException;
+    Mono<Void> wake(MacAddress macAddress, String ipAddress);
 }

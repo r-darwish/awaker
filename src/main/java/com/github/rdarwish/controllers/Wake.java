@@ -10,9 +10,7 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
-import java.io.IOException;
 import java.util.List;
 
 @Controller("/wake")
@@ -27,19 +25,8 @@ public class Wake {
     protected List<Host> hosts;
 
     @Post
-    public Mono<String> wake(@Parameter MacAddress macAddress) {
-        return Mono.just(macAddress)
-            .publishOn(Schedulers.boundedElastic())
-            .handle((addr, sink) ->
-                {
-                    try {
-                        wakeOnLan.wake(addr, broadcastAddress);
-                        sink.next("");
-                    } catch (IOException e) {
-                        sink.error(e);
-                    }
-                }
-            );
+    public Mono<Void> wake(@Parameter MacAddress macAddress) {
+        return wakeOnLan.wake(macAddress, broadcastAddress);
     }
 
     @Get
