@@ -15,18 +15,35 @@
 <script>
     $(document).ready(function () {
         $.ajax({url: "/wake"})
+            .always(function () {
+                $("#loading").hide();
+            })
+            .fail(function () {
+                $("#error").removeAttr("hidden");
+            })
             .done(function (data) {
                 $.each(data, function (index, host) {
                     $("#hosts").append(
-                        "<button id=" + host.name + " type=\"button\" class=\"btn btn-primary\">" + host.name + "</button><br/>"
+                        "<button id=" + host.name + " type=\"button\" class=\"btn btn-primary\">" +
+                        "<span class=\"spinner-border spinner-border-sm\" role=\"status\" aria-hidden=\"true\" hidden></span>\n"
+                        + host.name +
+                        "</div></button><br/><br/>"
                     );
                     $("#" + host.name).click(function () {
+                        const spinner = $("#" + host.name + " > .spinner-border");
+                        const button = $("#" + host.name);
+
+                        spinner.removeAttr("hidden");
+                        button.attr("disabled", "1");
                         $.ajax({
                             url: "/wake",
                             method: "POST",
                             contentType: "application/json; charset=utf-8",
                             dataType: "json",
                             data: JSON.stringify({"macAddress": host.macAddress})
+                        }).always(function () {
+                            spinner.hide();
+                            button.removeAttr("disabled");
                         })
                     })
                 })
@@ -34,7 +51,15 @@
     })
 </script>
 <div class="container">
-    <h1>Choose a host to wake</h1>
+    Choose a host to wake:<br/><br/>
+    <div id="loading">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+    <div class="alert alert-danger" hidden id="error">
+        Error loading the host list
+    </div>
     <table id="hosts"></table>
 </div>
 </body>

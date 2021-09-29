@@ -9,7 +9,7 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import lombok.RequiredArgsConstructor;
-import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.io.IOException;
@@ -27,14 +27,14 @@ public class Wake {
     protected List<Host> hosts;
 
     @Post
-    public Flux<String> wake(@Parameter MacAddress macAddress) {
-        return Flux.just(macAddress)
+    public Mono<String> wake(@Parameter MacAddress macAddress) {
+        return Mono.just(macAddress)
             .publishOn(Schedulers.boundedElastic())
             .handle((addr, sink) ->
                 {
                     try {
                         wakeOnLan.wake(addr, broadcastAddress);
-                        sink.next("SUCCESS");
+                        sink.next("");
                     } catch (IOException e) {
                         sink.error(e);
                     }
