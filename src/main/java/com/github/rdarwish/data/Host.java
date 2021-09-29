@@ -12,5 +12,5 @@ public class Host {
     @JsonSerialize(using = ToStringSerializer.class)
     MacAddress macAddress;
     String ipAddress;
-
+    Short validationPort;
 }

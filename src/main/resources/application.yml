@@ -6,3 +6,6 @@ micronaut:
       main:
         paths: classpath:public
         mapping: /**
+awaker:
+  validationDelay: 3s
+  retries: 3

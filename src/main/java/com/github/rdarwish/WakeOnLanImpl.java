@@ -2,10 +2,12 @@ package com.github.rdarwish;
 
 import com.github.rdarwish.data.MacAddress;
 import jakarta.inject.Singleton;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 import reactor.netty.udp.UdpClient;
 
 @Singleton
+@Slf4j
 public class WakeOnLanImpl implements WakeOnLan {
     public static final int PORT = 9;
 
@@ -21,6 +23,7 @@ public class WakeOnLanImpl implements WakeOnLan {
         }
 
         return UdpClient.create()
+            .doOnConnect(ignored -> log.info("Sending WOL packet to {} for address {}", ipAddress, macAddress))
             .host(ipAddress)
             .port(PORT)
             .connect()
